@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/21 23:18:24 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/22 07:15:41 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,9 +89,14 @@ t_token		*lexer(char *input, t_data *data);
 void		free_tokens(t_token *tokens);
 t_token		*new_token(t_token_type type, char *value);
 void		add_token(t_token **tokens, t_token *new);
-
+char		*handle_quotes(char *input, int *i, char quote_char);
+char		*handle_word(char *input, int *i);
+void		handle_redirect(char *input, int *i, t_token **tokens);
+char		*build_combined_word(char *input, int *i,
+				int *quote_type, t_data *data);
 /* Parser */
 t_cmd		*parser(t_token *tokens);
+char		**parse_args(t_token **tokens, int **quote_types);
 void		free_cmds(t_cmd *cmds);
 t_cmd		*new_cmd(void);
 void		add_cmd(t_cmd **cmds, t_cmd *new);
@@ -103,6 +108,9 @@ void		executor(t_cmd *cmds, t_data *data);
 void		execute_cmd(t_cmd *cmd, t_data *data);
 void		execute_pipeline(t_cmd *cmds, t_data *data);
 char		*find_executable(char *cmd, t_env *env);
+int			count_cmds(t_cmd *cmds);
+void		handle_parent_pipeline(int *prev_pipe, int *pipe_fd, t_cmd *cmd);
+void		wait_for_children(int cmd_count, pid_t last_pid, t_data *data);
 
 /* Builtins */
 int			is_builtin(char *cmd);

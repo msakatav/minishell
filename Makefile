@@ -6,7 +6,7 @@
 #    By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/17 00:00:00 by student           #+#    #+#              #
-#    Updated: 2025/11/21 23:46:25 by msakata          ###   ########TOKYO.jp   #
+#    Updated: 2025/11/22 07:14:30 by msakata          ###   ########TOKYO.jp   #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,12 +31,16 @@ RESET = \033[0m
 
 SRCS = $(SRCS_DIR)/main.c \
        $(SRCS_DIR)/lexer/lexer.c \
+       $(SRCS_DIR)/lexer/lexer_parse.c \
+       $(SRCS_DIR)/lexer/lexer_utils.c \
        $(SRCS_DIR)/lexer/token_utils.c \
        $(SRCS_DIR)/parser/parser.c \
+       $(SRCS_DIR)/parser/parser_args.c \
        $(SRCS_DIR)/parser/parser_utils.c \
        $(SRCS_DIR)/executor/executor.c \
        $(SRCS_DIR)/executor/execute_cmd.c \
        $(SRCS_DIR)/executor/execute_pipeline.c \
+       $(SRCS_DIR)/executor/pipeline_utils.c \
        $(SRCS_DIR)/executor/find_executable.c \
        $(SRCS_DIR)/builtins/is_builtin.c \
        $(SRCS_DIR)/builtins/execute_builtin.c \

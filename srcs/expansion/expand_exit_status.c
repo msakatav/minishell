@@ -6,17 +6,25 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/17 13:11:42 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/22 05:31:59 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+static void	append_exit_status(char **result, int exit_status, int *i)
+{
+	char	*status_str;
+
+	status_str = ft_itoa(exit_status);
+	*result = ft_strjoin_free(*result, status_str, 3);
+	*i += 2;
+}
+
 char	*expand_exit_status(char *str, int exit_status)
 {
 	char	*result;
 	char	*tmp;
-	char	*status_str;
 	int		i;
 	int		start;
 
@@ -33,11 +41,7 @@ char	*expand_exit_status(char *str, int exit_status)
 			result = ft_strjoin_free(result, tmp, 3);
 		}
 		if (str[i] == '$' && str[i + 1] == '?')
-		{
-			status_str = ft_itoa(exit_status);
-			result = ft_strjoin_free(result, status_str, 3);
-			i += 2;
-		}
+			append_exit_status(&result, exit_status, &i);
 	}
 	return (result);
 }
