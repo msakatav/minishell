@@ -37,35 +37,6 @@ jobs:
             /tmp/minishell_out
             /tmp/bash_out
 
-  build-and-test-macos:
-    name: Test on MacOS
-    runs-on: macos-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Install dependencies
-        run: |
-          brew install readline
-
-      - name: Build project
-        run: make
-
-      - name: Run all tests
-        run: make test
-
-      - name: Archive test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-macos
-          path: |
-            /tmp/minishell_out
-            /tmp/bash_out
-
   style-check:
     name: Code Style Check
     runs-on: ubuntu-latest
