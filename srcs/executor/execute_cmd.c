@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/21 23:18:24 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/22 05:20:27 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,27 @@ static void	execute_external_cmd(t_cmd *cmd, t_data *data)
 	exit(126);
 }
 
+static void	handle_child_process(t_cmd *cmd, t_data *data)
+{
+	if (setup_redirections(cmd->redirs, data) < 0)
+		exit(1);
+	execute_external_cmd(cmd, data);
+}
+
+static void	handle_parent_process(pid_t pid, t_data *data)
+{
+	int	status;
+
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		data->exit_status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		data->exit_status = 128 + WTERMSIG(status);
+}
+
 void	execute_cmd(t_cmd *cmd, t_data *data)
 {
 	pid_t	pid;
-	int		status;
 
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return ;
@@ -58,19 +75,9 @@ void	execute_cmd(t_cmd *cmd, t_data *data)
 	}
 	pid = fork();
 	if (pid == 0)
-	{
-		if (setup_redirections(cmd->redirs, data) < 0)
-			exit(1);
-		execute_external_cmd(cmd, data);
-	}
+		handle_child_process(cmd, data);
 	else if (pid > 0)
-	{
-		waitpid(pid, &status, 0);
-		if (WIFEXITED(status))
-			data->exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			data->exit_status = 128 + WTERMSIG(status);
-	}
+		handle_parent_process(pid, data);
 	else
 		print_error("fork", strerror(errno));
 }

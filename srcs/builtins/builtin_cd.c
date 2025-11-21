@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/20 18:37:33 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/22 05:20:27 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,29 @@ static void	update_pwd(t_data *data, char *old_pwd)
 	}
 }
 
+static char	*get_cd_path(char **args, t_data *data)
+{
+	char	*path;
+
+	if (!args[1])
+	{
+		path = get_env_value(data->env, "HOME");
+		if (!path)
+			print_error("cd", "HOME not set");
+	}
+	else if (ft_strcmp(args[1], "-") == 0)
+	{
+		path = get_env_value(data->env, "OLDPWD");
+		if (!path)
+			print_error("cd", "OLDPWD not set");
+		else
+			ft_putendl_fd(path, 1);
+	}
+	else
+		path = args[1];
+	return (path);
+}
+
 int	builtin_cd(char **args, t_data *data)
 {
 	char	*path;
@@ -35,27 +58,9 @@ int	builtin_cd(char **args, t_data *data)
 		print_error("cd", "too many arguments");
 		return (1);
 	}
-	if (!args[1])
-	{
-		path = get_env_value(data->env, "HOME");
-		if (!path)
-		{
-			print_error("cd", "HOME not set");
-			return (1);
-		}
-	}
-	else if (ft_strcmp(args[1], "-") == 0)
-	{
-		path = get_env_value(data->env, "OLDPWD");
-		if (!path)
-		{
-			print_error("cd", "OLDPWD not set");
-			return (1);
-		}
-		ft_putendl_fd(path, 1);
-	}
-	else
-		path = args[1];
+	path = get_cd_path(args, data);
+	if (!path)
+		return (1);
 	if (chdir(path) != 0)
 	{
 		print_error("cd", strerror(errno));

@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/17 13:11:42 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/22 05:31:59 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,12 @@ static void	print_export(t_env *env)
 	}
 }
 
+static int	is_valid_char(char c)
+{
+	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || \
+		(c >= '0' && c <= '9') || c == '_');
+}
+
 static int	is_valid_identifier(char *str)
 {
 	int	i;
@@ -33,22 +39,36 @@ static int	is_valid_identifier(char *str)
 	i = 1;
 	while (str[i] && str[i] != '=')
 	{
-		if (!((str[i] >= 'a' && str[i] <= 'z') || \
-			(str[i] >= 'A' && str[i] <= 'Z') || \
-			(str[i] >= '0' && str[i] <= '9') || str[i] == '_'))
+		if (!is_valid_char(str[i]))
 			return (0);
 		i++;
 	}
 	return (1);
 }
 
-int	builtin_export(char **args, t_data *data)
+static void	process_export_arg(char *arg, t_data *data)
 {
 	char	*equal;
 	char	*key;
 	char	*value;
-	int		i;
 
+	equal = ft_strchr(arg, '=');
+	if (equal)
+	{
+		key = ft_substr(arg, 0, equal - arg);
+		value = ft_strdup(equal + 1);
+		set_env_value(&data->env, key, value);
+		free(key);
+		free(value);
+	}
+}
+
+int	builtin_export(char **args, t_data *data)
+{
+	int	i;
+	int	ret;
+
+	ret = 0;
 	if (!args[1])
 	{
 		print_export(data->env);
@@ -60,18 +80,11 @@ int	builtin_export(char **args, t_data *data)
 		if (!is_valid_identifier(args[i]))
 		{
 			print_error("export", "not a valid identifier");
-			return (1);
+			ret = 1;
 		}
-		equal = ft_strchr(args[i], '=');
-		if (equal)
-		{
-			key = ft_substr(args[i], 0, equal - args[i]);
-			value = ft_strdup(equal + 1);
-			set_env_value(&data->env, key, value);
-			free(key);
-			free(value);
-		}
+		else
+			process_export_arg(args[i], data);
 		i++;
 	}
-	return (0);
+	return (ret);
 }

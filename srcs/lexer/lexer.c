@@ -6,120 +6,78 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/20 18:25:31 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/22 05:31:59 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*handle_quotes(char *input, int *i, char quote_char)
+static int	is_separator(char c)
 {
-	int		start;
-	char	*value;
-
-	start = *i;
-	(*i)++;
-	while (input[*i] && input[*i] != quote_char)
-		(*i)++;
-	if (input[*i] == quote_char)
-	{
-		value = ft_substr(input, start + 1, *i - start - 1);
-		(*i)++;
-	}
-	else
-		value = ft_substr(input, start + 1, *i - start - 1);
-	return (value);
+	return (ft_isspace(c) || c == '|' || c == '<' || c == '>');
 }
 
-static char	*handle_word(char *input, int *i)
+static char	*extract_part(char *input, int *i, int *quote_char)
 {
-	int		start;
-
-	start = *i;
-	while (input[*i] && !ft_isspace(input[*i]) && \
-		input[*i] != '|' && input[*i] != '<' && input[*i] != '>' && \
-		input[*i] != '\'' && input[*i] != '"')
-		(*i)++;
-	return (ft_substr(input, start, *i - start));
+	if (input[*i] == '\'')
+	{
+		*quote_char = '\'';
+		return (handle_quotes(input, i, '\''));
+	}
+	if (input[*i] == '"')
+	{
+		*quote_char = '"';
+		return (handle_quotes(input, i, '"'));
+	}
+	*quote_char = 0;
+	return (handle_word(input, i));
 }
 
-static void	handle_redirect(char *input, int *i, t_token **tokens)
+static void	append_part(char **result, char *part)
 {
-	if (input[*i] == '<')
+	char	*tmp;
+
+	tmp = *result;
+	*result = ft_strjoin(*result, part);
+	free(tmp);
+	free(part);
+}
+
+static char	*process_part(char *part, int quote, t_data *data)
+{
+	char	*tmp;
+
+	if (quote != '\'')
 	{
-		if (input[*i + 1] == '<')
-		{
-			add_token(tokens, new_token(TOKEN_REDIR_HEREDOC, ft_strdup("<<")));
-			(*i) += 2;
-		}
-		else
-		{
-			add_token(tokens, new_token(TOKEN_REDIR_IN, ft_strdup("<")));
-			(*i)++;
-		}
+		tmp = expand_variables(part, data);
+		free(part);
+		return (tmp);
 	}
-	else if (input[*i] == '>')
-	{
-		if (input[*i + 1] == '>')
-		{
-			add_token(tokens, new_token(TOKEN_REDIR_APPEND, ft_strdup(">>")));
-			(*i) += 2;
-		}
-		else
-		{
-			add_token(tokens, new_token(TOKEN_REDIR_OUT, ft_strdup(">")));
-			(*i)++;
-		}
-	}
+	return (part);
 }
 
 static char	*build_combined_word(char *input, int *i, int *quote_type, t_data *data)
 {
 	char	*result;
 	char	*part;
-	char	*expanded;
-	char	*tmp;
 	int		has_unquoted;
-	int		first_quote;
+	int		cur_quote;
 
 	result = ft_strdup("");
 	has_unquoted = 0;
-	first_quote = 0;
-	while (input[*i] && !ft_isspace(input[*i]) && \
-		input[*i] != '|' && input[*i] != '<' && input[*i] != '>')
+	*quote_type = 0;
+	while (input[*i] && !is_separator(input[*i]))
 	{
-		if (input[*i] == '\'')
-		{
-			part = handle_quotes(input, i, '\'');
-			if (!first_quote)
-				first_quote = '\'';
-		}
-		else if (input[*i] == '"')
-		{
-			part = handle_quotes(input, i, '"');
-			expanded = expand_variables(part, data);
-			free(part);
-			part = expanded;
-			if (!first_quote)
-				first_quote = '"';
-		}
-		else
-		{
-			part = handle_word(input, i);
-			expanded = expand_variables(part, data);
-			free(part);
-			part = expanded;
+		part = extract_part(input, i, &cur_quote);
+		part = process_part(part, cur_quote, data);
+		if (cur_quote == 0)
 			has_unquoted = 1;
-		}
-		tmp = result;
-		result = ft_strjoin(result, part);
-		free(tmp);
-		free(part);
+		else if (*quote_type == 0)
+			*quote_type = cur_quote;
+		append_part(&result, part);
 	}
 	if (has_unquoted)
 		*quote_type = 0;
-	else
-		*quote_type = first_quote;
 	return (result);
 }
 
