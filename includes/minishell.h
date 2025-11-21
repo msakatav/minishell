@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/22 05:20:27 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/22 07:15:41 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,8 @@ void		add_token(t_token **tokens, t_token *new);
 char		*handle_quotes(char *input, int *i, char quote_char);
 char		*handle_word(char *input, int *i);
 void		handle_redirect(char *input, int *i, t_token **tokens);
-
+char		*build_combined_word(char *input, int *i,
+				int *quote_type, t_data *data);
 /* Parser */
 t_cmd		*parser(t_token *tokens);
 char		**parse_args(t_token **tokens, int **quote_types);

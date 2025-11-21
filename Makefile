@@ -6,7 +6,7 @@
 #    By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/17 00:00:00 by student           #+#    #+#              #
-#    Updated: 2025/11/22 05:20:27 by msakata          ###   ########TOKYO.jp   #
+#    Updated: 2025/11/22 07:14:30 by msakata          ###   ########TOKYO.jp   #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,7 @@ RESET = \033[0m
 
 SRCS = $(SRCS_DIR)/main.c \
        $(SRCS_DIR)/lexer/lexer.c \
+       $(SRCS_DIR)/lexer/lexer_parse.c \
        $(SRCS_DIR)/lexer/lexer_utils.c \
        $(SRCS_DIR)/lexer/token_utils.c \
        $(SRCS_DIR)/parser/parser.c \
