@@ -29,19 +29,36 @@
   5. 複製に失敗した場合、ファイルを閉じて `-1` を返す。
   6. ファイルを閉じて `0` を返す。
 
+## 関数: handle_heredoc_redir
+- **引数**:
+  - `file`: デリミタ（ファイル名として渡される）
+- **処理**:
+  1. `handle_heredoc` を呼び出し、ヒアドキュメントを処理してファイルディスクリプタを取得する。
+  2. 失敗したら `-1` を返す。
+  3. `dup2` でファイルディスクリプタを標準入力 (`STDIN_FILENO`) に複製する。
+  4. ファイルディスクリプタを閉じる。
+  5. 成功したら `0` を返す。
+
+## 関数: handle_single_redirection
+- **引数**:
+  - `redir`: リダイレクト構造体
+  - `data`: シェルの主要データ構造体
+- **処理**:
+  1. リダイレクトの種類に応じて処理を分岐する:
+     - `TOKEN_REDIR_IN`: `handle_input_redir` を呼び出す。
+     - `TOKEN_REDIR_OUT`: `handle_output_redir` (append=0) を呼び出す。
+     - `TOKEN_REDIR_APPEND`: `handle_output_redir` (append=1) を呼び出す。
+     - `TOKEN_REDIR_HEREDOC`: `handle_heredoc_redir` を呼び出す。
+  2. いずれかの処理が失敗したら `-1` を返す。
+  3. 成功したら `0` を返す。
+
 ## 関数: setup_redirections
 - **引数**:
   - `redirs`: リダイレクトリスト
   - `data`: シェルの主要データ構造体
 - **処理**:
   1. リダイレクトリストを走査するループ:
-     - `TOKEN_REDIR_IN` の場合: `handle_input_redir` を呼び出す。
-     - `TOKEN_REDIR_OUT` の場合: `handle_output_redir` (append=0) を呼び出す。
-     - `TOKEN_REDIR_APPEND` の場合: `handle_output_redir` (append=1) を呼び出す。
-     - `TOKEN_REDIR_HEREDOC` の場合:
-       - `handle_heredoc` を呼び出し、ファイルディスクリプタを取得する。
-       - 取得したディスクリプタを標準入力に `dup2` する。
-       - ディスクリプタを閉じる。
-     - いずれかの処理で失敗 (`< 0`) した場合、`-1` を返す。
-     - 次のノードへ進む。
-  2. `0` を返す。
+     - `handle_single_redirection` を呼び出す。
+     - 失敗したら `-1` を返す。
+     - 次のリダイレクトへ進む。
+  2. すべて成功したら `0` を返す。
