@@ -1,0 +1,84 @@
+name: Minishell CI
+
+on:
+  push:
+    branches: ["main", "master", "develop"]
+  pull_request:
+    branches: ["main", "master", "develop"]
+
+jobs:
+  build-and-test-linux:
+    name: Test on Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make gcc libreadline-dev
+
+      - name: Build project
+        run: make
+
+      - name: Run all tests
+        run: make test
+
+      - name: Archive test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-ubuntu
+          path: |
+            /tmp/minishell_out
+            /tmp/bash_out
+
+  build-and-test-macos:
+    name: Test on MacOS
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          brew install readline
+
+      - name: Build project
+        run: make
+
+      - name: Run all tests
+        run: make test
+
+      - name: Archive test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-macos
+          path: |
+            /tmp/minishell_out
+            /tmp/bash_out
+
+  style-check:
+    name: Code Style Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check file permissions
+        run: |
+          echo "Checking for executable source files..."
+          find srcs includes -type f -executable 2>/dev/null | tee executable_files.txt || true
+          if [ -s executable_files.txt ]; then
+            echo "Warning: Some source files are executable"
+          fi
+        continue-on-error: true
