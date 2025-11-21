@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/22 05:31:59 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/22 06:12:25 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ static int	count_args(t_token *tokens)
 	{
 		if (tokens->type == TOKEN_WORD)
 			count++;
-		else if (tokens->type >= TOKEN_REDIR_IN && \
-			tokens->type <= TOKEN_REDIR_HEREDOC)
+		else if (tokens->type >= TOKEN_REDIR_IN
+			&& tokens->type <= TOKEN_REDIR_HEREDOC)
 		{
 			tokens = tokens->next;
 			if (!tokens)
@@ -33,7 +33,8 @@ static int	count_args(t_token *tokens)
 	return (count);
 }
 
-static void	process_arg_token(t_token **tokens, char **args, int *quotes, int *i)
+static void	process_arg_token(t_token **tokens,
+	char **args, int *quotes, int *i)
 {
 	if ((*tokens)->type == TOKEN_WORD)
 	{
@@ -42,8 +43,8 @@ static void	process_arg_token(t_token **tokens, char **args, int *quotes, int *i
 		(*i)++;
 		*tokens = (*tokens)->next;
 	}
-	else if ((*tokens)->type >= TOKEN_REDIR_IN && \
-		(*tokens)->type <= TOKEN_REDIR_HEREDOC)
+	else if ((*tokens)->type >= TOKEN_REDIR_IN
+		&& (*tokens)->type <= TOKEN_REDIR_HEREDOC)
 	{
 		*tokens = (*tokens)->next;
 		if (*tokens)

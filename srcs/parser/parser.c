@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/22 05:31:59 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/22 06:10:47 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ static t_redir	*parse_redirections(t_token **tokens)
 	redirs = NULL;
 	while (*tokens && (*tokens)->type != TOKEN_PIPE)
 	{
-		if ((*tokens)->type >= TOKEN_REDIR_IN && \
-			(*tokens)->type <= TOKEN_REDIR_HEREDOC)
+		if ((*tokens)->type >= TOKEN_REDIR_IN
+			&& (*tokens)->type <= TOKEN_REDIR_HEREDOC)
 		{
 			type = (*tokens)->type;
 			*tokens = (*tokens)->next;

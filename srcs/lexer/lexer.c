@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/22 05:31:59 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/22 06:15:28 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ static char	*process_part(char *part, int quote, t_data *data)
 	return (part);
 }
 
-static char	*build_combined_word(char *input, int *i, int *quote_type, t_data *data)
+static char	*build_combined_word(char *input, int *i,
+	int *quote_type, t_data *data)
 {
 	char	*result;
 	char	*part;

@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/22 05:31:59 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/22 06:16:22 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ static void	execute_child(t_cmd *cmd, t_data *data, int *prev, int *pfd)
 		exec_external_in_child(cmd, data);
 }
 
-static pid_t	process_pipeline_cmd(t_cmd *cmd, t_data *data, int *prev, int *pfd)
+static pid_t	process_pipeline_cmd(t_cmd *cmd,
+	t_data *data, int *prev, int *pfd)
 {
 	pid_t	pid;
 

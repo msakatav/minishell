@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/22 05:31:59 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/22 06:15:06 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ char	*handle_word(char *input, int *i)
 	int		start;
 
 	start = *i;
-	while (input[*i] && !ft_isspace(input[*i]) && \
-		input[*i] != '|' && input[*i] != '<' && input[*i] != '>' && \
-		input[*i] != '\'' && input[*i] != '"')
+	while (input[*i] && !ft_isspace(input[*i])
+		&& input[*i] != '|' && input[*i] != '<' && input[*i] != '>'
+		&& input[*i] != '\'' && input[*i] != '"')
 		(*i)++;
 	return (ft_substr(input, start, *i - start));
 }

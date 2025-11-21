@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/22 05:31:59 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/22 06:14:03 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ static void	print_export(t_env *env)
 
 static int	is_valid_char(char c)
 {
-	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || \
-		(c >= '0' && c <= '9') || c == '_');
+	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+		|| (c >= '0' && c <= '9') || c == '_');
 }
 
 static int	is_valid_identifier(char *str)
@@ -33,8 +33,8 @@ static int	is_valid_identifier(char *str)
 
 	if (!str || !str[0])
 		return (0);
-	if (!((str[0] >= 'a' && str[0] <= 'z') || \
-		(str[0] >= 'A' && str[0] <= 'Z') || str[0] == '_'))
+	if (!((str[0] >= 'a' && str[0] <= 'z')
+			|| (str[0] >= 'A' && str[0] <= 'Z') || str[0] == '_'))
 		return (0);
 	i = 1;
 	while (str[i] && str[i] != '=')
