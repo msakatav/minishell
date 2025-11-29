@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/20 18:25:31 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/29 11:27:44 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	executor(t_cmd *cmds, t_data *data)
 
 	if (!cmds)
 		return ;
+	signal(SIGINT, SIG_IGN);
 	saved_stdin = dup(STDIN_FILENO);
 	saved_stdout = dup(STDOUT_FILENO);
 	if (cmds->next)
@@ -29,4 +30,5 @@ void	executor(t_cmd *cmds, t_data *data)
 	dup2(saved_stdout, STDOUT_FILENO);
 	close(saved_stdin);
 	close(saved_stdout);
+	setup_signals();
 }

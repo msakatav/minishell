@@ -16,9 +16,10 @@
      - `pfd[1]` (書き込み側) を閉じる。
   3. `setup_redirections` を呼び出し、リダイレクトを設定する。
      - 失敗した場合、ステータス `1` で終了 (`exit`) する。
-  4. コマンドがビルトインの場合:
+  4. `SIGINT` と `SIGQUIT` のハンドラをデフォルト (`SIG_DFL`) に戻す。
+  5. コマンドがビルトインの場合:
      - `execute_builtin` を呼び出し、その戻り値で終了 (`exit`) する。
-  5. 外部コマンドの場合:
+  6. 外部コマンドの場合:
      - `exec_external_in_child` を呼び出し、外部コマンドを実行する。
 
 ## 関数: process_pipeline_cmd

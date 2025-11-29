@@ -35,6 +35,7 @@
   4. 子プロセス (`pid == 0`) の場合:
      - `setup_redirections` を呼び出し、リダイレクトを設定する。
        - 失敗した場合、ステータス `1` で終了 (`exit`) する。
+     - `SIGINT` と `SIGQUIT` のハンドラをデフォルト (`SIG_DFL`) に戻す。
      - `execute_external_cmd` を呼び出し、外部コマンドを実行する。
   5. 親プロセス (`pid > 0`) の場合:
      - `waitpid` で子プロセスの終了を待つ。
