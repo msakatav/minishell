@@ -11,6 +11,18 @@ MINISHELL="./target/minishell"
 TOTAL_TESTS=0
 PASSED_TESTS=0
 FAILED_TESTS=0
+USE_VALGRIND=0
+VALGRIND_EXIT_CODE=242
+
+# Check for arguments
+for arg in "$@"
+do
+    if [ "$arg" == "--valgrind" ]; then
+        USE_VALGRIND=1
+        echo -e "${YELLOW}Running with Valgrind memory check...${NC}"
+        MINISHELL="valgrind --leak-check=full --show-leak-kinds=all --suppressions=.suppression --error-exitcode=$VALGRIND_EXIT_CODE --quiet ./target/minishell"
+    fi
+done
 
 # Test result tracking
 declare -a FAILED_TEST_NAMES
@@ -31,6 +43,16 @@ run_test() {
     echo -e "$input" | $MINISHELL > /tmp/minishell_out 2>&1
     actual_exit_code=$?
     
+    # Check for valgrind error
+    if [ $USE_VALGRIND -eq 1 ] && [ $actual_exit_code -eq $VALGRIND_EXIT_CODE ]; then
+         echo -e "${RED}✗${NC} $test_name (Memory Leak Detected)"
+         # Extract relevant leak info if possible, or just warn
+         grep -A 2 "definitely lost:" /tmp/minishell_out | head -n 3
+         FAILED_TESTS=$((FAILED_TESTS + 1))
+         FAILED_TEST_NAMES+=("$test_name (Memory Leak)")
+         return
+    fi
+
     # Check if we should verify exit code (bash compatibility)
     if [ "$expected_exit_code" != "" ]; then
         if [ $actual_exit_code -eq $expected_exit_code ]; then

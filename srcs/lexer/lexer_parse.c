@@ -6,16 +6,11 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 07:10:55 by msakata           #+#    #+#             */
-/*   Updated: 2025/11/22 07:14:48 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/29 14:09:32 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static int	is_separator(char c)
-{
-	return (ft_isspace(c) || c == '|' || c == '<' || c == '>');
-}
 
 static char	*extract_part(char *input, int *i, int *quote_char)
 {
@@ -43,6 +38,29 @@ static void	append_part(char **result, char *part)
 	free(part);
 }
 
+static void	protect_spaces(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == ' ')
+			str[i] = 1;
+		else if (str[i] == '\t')
+			str[i] = 2;
+		else if (str[i] == '\n')
+			str[i] = 3;
+		else if (str[i] == '\v')
+			str[i] = 4;
+		else if (str[i] == '\f')
+			str[i] = 5;
+		else if (str[i] == '\r')
+			str[i] = 6;
+		i++;
+	}
+}
+
 static char	*process_part(char *part, int quote, t_data *data)
 {
 	char	*tmp;
@@ -51,8 +69,11 @@ static char	*process_part(char *part, int quote, t_data *data)
 	{
 		tmp = expand_variables(part, data);
 		free(part);
+		if (quote == '"')
+			protect_spaces(tmp);
 		return (tmp);
 	}
+	protect_spaces(part);
 	return (part);
 }
 

@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/29 11:27:44 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/29 14:09:32 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,13 +49,24 @@ static void	read_heredoc_child(int fd, char *delimiter)
 	exit(0);
 }
 
-int	handle_heredoc(char *delimiter)
+static int	wait_heredoc_child(pid_t pid)
+{
+	int		status;
+	void	(*prev_handler)(int);
+
+	prev_handler = signal(SIGINT, SIG_IGN);
+	waitpid(pid, &status, 0);
+	signal(SIGINT, prev_handler);
+	if (WIFEXITED(status) && WEXITSTATUS(status) == 130)
+		return (1);
+	return (0);
+}
+
+int	create_heredoc(char *delimiter, char **filename_out)
 {
 	char	*filename;
 	int		fd;
 	pid_t	pid;
-	int		status;
-	void	(*prev_handler)(int);
 
 	filename = get_heredoc_filename();
 	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0600);
@@ -67,18 +78,13 @@ int	handle_heredoc(char *delimiter)
 	pid = fork();
 	if (pid == 0)
 		read_heredoc_child(fd, delimiter);
-	prev_handler = signal(SIGINT, SIG_IGN);
-	waitpid(pid, &status, 0);
-	signal(SIGINT, prev_handler);
 	close(fd);
-	if (WIFEXITED(status) && WEXITSTATUS(status) == 130)
+	if (wait_heredoc_child(pid))
 	{
 		unlink(filename);
 		free(filename);
 		return (-1);
 	}
-	fd = open(filename, O_RDONLY);
-	unlink(filename);
-	free(filename);
-	return (fd);
+	*filename_out = filename;
+	return (0);
 }

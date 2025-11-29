@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/22 05:20:27 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/29 13:00:14 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,20 @@ void	wait_for_children(int cmd_count, pid_t last_pid, t_data *data)
 {
 	int		status;
 	pid_t	pid;
+	int		signal_printed;
 
+	signal_printed = 0;
 	while (cmd_count-- > 0)
 	{
 		pid = wait(&status);
+		if (WIFSIGNALED(status) && !signal_printed)
+		{
+			if (WTERMSIG(status) == SIGINT)
+				write(1, "\n", 1);
+			else if (WTERMSIG(status) == SIGQUIT)
+				ft_putendl_fd("Quit (core dumped)", 2);
+			signal_printed = 1;
+		}
 		if (pid == last_pid)
 		{
 			if (WIFEXITED(status))

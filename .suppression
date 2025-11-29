@@ -1,0 +1,23 @@
+{
+   exclude_readline_rl
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:rl_*
+}
+
+{
+   exclude_readline
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:readline
+}
+
+{
+   exclude_readline_history
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:add_history
+}

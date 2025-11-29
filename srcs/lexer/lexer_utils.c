@@ -6,11 +6,16 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/22 06:15:06 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/29 14:09:32 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	is_separator(char c)
+{
+	return (ft_isspace(c) || c == '|' || c == '<' || c == '>');
+}
 
 char	*handle_quotes(char *input, int *i, char quote_char)
 {
