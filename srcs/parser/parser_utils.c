@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/21 23:18:24 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/29 14:09:32 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,29 +71,4 @@ void	add_redir(t_redir **redirs, t_redir *new)
 	while (current->next)
 		current = current->next;
 	current->next = new;
-}
-
-void	free_cmds(t_cmd *cmds)
-{
-	t_cmd	*tmp_cmd;
-	t_redir	*tmp_redir;
-
-	while (cmds)
-	{
-		tmp_cmd = cmds;
-		cmds = cmds->next;
-		if (tmp_cmd->args)
-			ft_free_split(tmp_cmd->args);
-		if (tmp_cmd->quote_types)
-			free(tmp_cmd->quote_types);
-		while (tmp_cmd->redirs)
-		{
-			tmp_redir = tmp_cmd->redirs;
-			tmp_cmd->redirs = tmp_cmd->redirs->next;
-			if (tmp_redir->file)
-				free(tmp_redir->file);
-			free(tmp_redir);
-		}
-		free(tmp_cmd);
-	}
 }

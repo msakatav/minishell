@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/22 07:15:41 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/29 14:09:32 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ char		*handle_word(char *input, int *i);
 void		handle_redirect(char *input, int *i, t_token **tokens);
 char		*build_combined_word(char *input, int *i,
 				int *quote_type, t_data *data);
+int			is_separator(char c);
 /* Parser */
 t_cmd		*parser(t_token *tokens);
 char		**parse_args(t_token **tokens, int **quote_types);
@@ -137,7 +138,7 @@ char		*expand_exit_status(char *str, int exit_status);
 
 /* Redirections */
 int			setup_redirections(t_redir *redirs, t_data *data);
-int			handle_heredoc(char *delimiter);
+int			create_heredoc(char *delimiter, char **filename_out);
 
 /* Signals */
 void		setup_signals(void);

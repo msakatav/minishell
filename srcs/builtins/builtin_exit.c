@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/20 18:48:19 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/29 14:03:44 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,14 @@ int	builtin_exit(char **args, t_data *data)
 	if (!args[1])
 	{
 		cleanup_data(data);
+		rl_clear_history();
 		exit(data->exit_status);
 	}
 	if (!is_numeric(args[1]))
 	{
 		print_error("exit", "numeric argument required");
 		cleanup_data(data);
+		rl_clear_history();
 		exit(2);
 	}
 	if (args[2])
@@ -53,5 +55,6 @@ int	builtin_exit(char **args, t_data *data)
 	}
 	exit_code = ft_atoi(args[1]);
 	cleanup_data(data);
+	rl_clear_history();
 	exit(exit_code % 256);
 }

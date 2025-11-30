@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/22 05:31:59 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/29 12:52:43 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,13 @@ static int	handle_heredoc_redir(char *file)
 {
 	int	heredoc_fd;
 
-	heredoc_fd = handle_heredoc(file);
+	heredoc_fd = open(file, O_RDONLY);
 	if (heredoc_fd < 0)
+	{
+		print_error(file, strerror(errno));
 		return (-1);
+	}
+	unlink(file);
 	if (dup2(heredoc_fd, STDIN_FILENO) < 0)
 	{
 		close(heredoc_fd);

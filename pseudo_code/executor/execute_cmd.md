@@ -35,10 +35,14 @@
   4. 子プロセス (`pid == 0`) の場合:
      - `setup_redirections` を呼び出し、リダイレクトを設定する。
        - 失敗した場合、ステータス `1` で終了 (`exit`) する。
+     - `SIGINT` と `SIGQUIT` のハンドラをデフォルト (`SIG_DFL`) に戻す。
      - `execute_external_cmd` を呼び出し、外部コマンドを実行する。
   5. 親プロセス (`pid > 0`) の場合:
      - `waitpid` で子プロセスの終了を待つ。
      - 子プロセスが正常終了した場合 (`WIFEXITED`)、終了ステータスを取得して `data->exit_status` に設定する。
-     - 子プロセスがシグナルで終了した場合 (`WIFSIGNALED`)、シグナル番号に `128` を加えた値を `data->exit_status` に設定する。
+     - 子プロセスがシグナルで終了した場合 (`WIFSIGNALED`):
+       - シグナル番号に `128` を加えた値を `data->exit_status` に設定する。
+       - `SIGINT` の場合、改行を出力する。
+       - `SIGQUIT` の場合、"Quit (core dumped)" を出力する。
   6. `fork` に失敗した場合:
      - エラーメッセージを出力する。

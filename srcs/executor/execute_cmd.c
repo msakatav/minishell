@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/22 05:20:27 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/29 13:00:14 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ static void	handle_child_process(t_cmd *cmd, t_data *data)
 {
 	if (setup_redirections(cmd->redirs, data) < 0)
 		exit(1);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	execute_external_cmd(cmd, data);
 }
 
@@ -54,7 +56,13 @@ static void	handle_parent_process(pid_t pid, t_data *data)
 	if (WIFEXITED(status))
 		data->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
+	{
 		data->exit_status = 128 + WTERMSIG(status);
+		if (WTERMSIG(status) == SIGINT)
+			write(1, "\n", 1);
+		else if (WTERMSIG(status) == SIGQUIT)
+			ft_putendl_fd("Quit (core dumped)", 2);
+	}
 }
 
 void	execute_cmd(t_cmd *cmd, t_data *data)

@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/22 06:16:22 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/11/29 12:15:42 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ static void	execute_child(t_cmd *cmd, t_data *data, int *prev, int *pfd)
 	}
 	if (setup_redirections(cmd->redirs, data) < 0)
 		exit(1);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	if (is_builtin(cmd->args[0]))
 		exit(execute_builtin(cmd, data));
 	else
