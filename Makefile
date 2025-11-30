@@ -6,7 +6,7 @@
 #    By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/17 00:00:00 by student           #+#    #+#              #
-#    Updated: 2025/11/22 07:14:30 by msakata          ###   ########TOKYO.jp   #
+#    Updated: 2025/11/30 13:24:09 by msakata          ###   ########TOKYO.jp   #
 #                                                                              #
 # **************************************************************************** #
 
@@ -114,6 +114,9 @@ test: $(NAME)
 	@./tests/test_builtins.sh
 	@echo ""
 	@./tests/test_parser.sh
+	@echo ""
+	@echo "${GREEN}Running Leak Test...${RESET}"
+	@./tests/repro_leak.sh
 	@echo ""
 	@echo "${GREEN}==================================${RESET}"
 	@echo "${GREEN}   Test Suite Complete!${RESET}"
