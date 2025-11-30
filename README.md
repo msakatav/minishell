@@ -53,7 +53,7 @@ Minishellは、シェルの主要な機能を再現したコマンドライン�
 リポジトリをクローンし、プロジェクトをコンパイルします：
 
 ```bash
-git clone <repository-url> minishell
+git clone git@github.com:msakatav/minishell.git
 cd minishell
 make
 ```
