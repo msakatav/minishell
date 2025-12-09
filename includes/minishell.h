@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/29 14:09:32 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/09 20:25:49 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ typedef enum e_token_type
 	TOKEN_REDIR_APPEND,
 	TOKEN_REDIR_HEREDOC,
 	TOKEN_ENV_VAR,
-	TOKEN_EXIT_STATUS
+	TOKEN_EXIT_STATUS,
+	TOKEN_EMPTY_EXPANSION
 }	t_token_type;
 
 typedef struct s_token
@@ -96,7 +97,7 @@ char		*build_combined_word(char *input, int *i,
 				int *quote_type, t_data *data);
 int			is_separator(char c);
 /* Parser */
-t_cmd		*parser(t_token *tokens);
+t_cmd		*parser(t_token *tokens, t_data *data);
 char		**parse_args(t_token **tokens, int **quote_types);
 void		free_cmds(t_cmd *cmds);
 t_cmd		*new_cmd(void);
@@ -151,5 +152,6 @@ void		exit_error(char *msg, int exit_code);
 
 /* Memory management */
 void		cleanup_data(t_data *data);
+void		free_redirs(t_redir *redirs);
 
 #endif

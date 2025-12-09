@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/17 13:11:42 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/09 20:07:54 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,60 @@ static void	add_env_node(t_env **env, t_env *new)
 	current->next = new;
 }
 
+static void	update_shlvl(t_env **env)
+{
+	t_env	*curr;
+	int		lvl;
+
+	curr = *env;
+	while (curr)
+	{
+		if (ft_strcmp(curr->key, "SHLVL") == 0)
+		{
+			lvl = ft_atoi(curr->value) + 1;
+			free(curr->value);
+			curr->value = ft_itoa(lvl);
+			return ;
+		}
+		curr = curr->next;
+	}
+	add_env_node(env, new_env_node("SHLVL", "1"));
+}
+
+static void	ensure_pwd(t_env **env)
+{
+	t_env	*curr;
+	char	*cwd;
+
+	curr = *env;
+	while (curr)
+	{
+		if (ft_strcmp(curr->key, "PWD") == 0)
+			return ;
+		curr = curr->next;
+	}
+	cwd = getcwd(NULL, 0);
+	if (cwd)
+	{
+		add_env_node(env, new_env_node("PWD", cwd));
+		free(cwd);
+	}
+}
+
+static void	ensure_underscore(t_env **env)
+{
+	t_env	*curr;
+
+	curr = *env;
+	while (curr)
+	{
+		if (ft_strcmp(curr->key, "_") == 0)
+			return ;
+		curr = curr->next;
+	}
+	add_env_node(env, new_env_node("_", "/usr/bin/env"));
+}
+
 t_env	*init_env(char **envp)
 {
 	t_env	*env;
@@ -73,6 +127,9 @@ t_env	*init_env(char **envp)
 		}
 		i++;
 	}
+	ensure_pwd(&env);
+	update_shlvl(&env);
+	ensure_underscore(&env);
 	return (env);
 }
 

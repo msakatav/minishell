@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 07:10:55 by msakata           #+#    #+#             */
-/*   Updated: 2025/11/29 14:09:32 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/09 21:01:20 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,11 @@ char	*build_combined_word(char *input, int *i,
 	while (input[*i] && !is_separator(input[*i]))
 	{
 		part = extract_part(input, i, &cur_quote);
+		if (!part)
+		{
+			free(result);
+			return (NULL);
+		}
 		part = process_part(part, cur_quote, data);
 		if (cur_quote == 0)
 			has_unquoted = 1;

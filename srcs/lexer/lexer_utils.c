@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/29 14:09:32 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/09 21:01:20 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,10 @@ char	*handle_quotes(char *input, int *i, char quote_char)
 		(*i)++;
 	}
 	else
-		value = ft_substr(input, start + 1, *i - start - 1);
+	{
+		ft_putendl_fd("minishell: syntax error: unclosed quote", 2);
+		return (NULL);
+	}
 	return (value);
 }
 

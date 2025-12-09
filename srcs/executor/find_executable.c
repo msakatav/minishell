@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/22 05:20:27 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/09 19:57:59 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,14 @@ char	*find_executable(char *cmd, t_env *env)
 	}
 	path_env = get_env_value(env, "PATH");
 	if (!path_env)
+	{
+		result = ft_strjoin("./", cmd);
+		if (result && access(result, X_OK) == 0)
+			return (result);
+		if (result)
+			free(result);
 		return (NULL);
+	}
 	paths = ft_split(path_env, ':');
 	if (!paths)
 		return (NULL);

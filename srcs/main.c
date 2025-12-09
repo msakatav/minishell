@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/20 18:41:59 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/09 20:25:49 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static void	process_line(char *line, t_data *data)
 	tokens = lexer(line, data);
 	if (!tokens)
 		return ;
-	data->cmds = parser(tokens);
+	data->cmds = parser(tokens, data);
 	free_tokens(tokens);
 	if (data->cmds)
 	{
