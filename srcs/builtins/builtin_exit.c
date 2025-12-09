@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/29 14:03:44 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/09 21:58:36 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,47 @@ static int	is_numeric(char *str)
 	int	i;
 
 	i = 0;
+	while (ft_isspace(str[i]))
+		i++;
 	if (str[i] == '-' || str[i] == '+')
 		i++;
 	if (!str[i])
 		return (0);
-	while (str[i])
+	while (ft_isdigit(str[i]))
+		i++;
+	while (ft_isspace(str[i]))
+		i++;
+	if (str[i])
+		return (0);
+	return (1);
+}
+
+static int	check_overflow(char *str)
+{
+	unsigned long long	num;
+	int					sign;
+	int					i;
+
+	num = 0;
+	sign = 1;
+	i = 0;
+	while (ft_isspace(str[i]))
+		i++;
+	if (str[i] == '-' || str[i] == '+')
 	{
-		if (str[i] < '0' || str[i] > '9')
-			return (0);
+		if (str[i] == '-')
+			sign = -1;
 		i++;
 	}
-	return (1);
+	while (ft_isdigit(str[i]))
+	{
+		if (num > 922337203685477580 || (num == 922337203685477580
+				&& ((sign == 1 && str[i] - '0' > 7)
+					|| (sign == -1 && str[i] - '0' > 8))))
+			return (1);
+		num = num * 10 + (str[i++] - '0');
+	}
+	return (0);
 }
 
 int	builtin_exit(char **args, t_data *data)
@@ -41,7 +71,7 @@ int	builtin_exit(char **args, t_data *data)
 		rl_clear_history();
 		exit(data->exit_status);
 	}
-	if (!is_numeric(args[1]))
+	if (!is_numeric(args[1]) || check_overflow(args[1]))
 	{
 		print_error("exit", "numeric argument required");
 		cleanup_data(data);

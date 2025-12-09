@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/29 14:09:32 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/09 20:25:49 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	cleanup_data(t_data *data)
 		close(data->stdout_backup);
 }
 
-static void	free_redirs(t_redir *redirs)
+void	free_redirs(t_redir *redirs)
 {
 	t_redir	*tmp_redir;
 

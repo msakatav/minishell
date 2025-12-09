@@ -20,6 +20,28 @@
      - パスと環境変数配列のメモリを解放する。
      - ステータス `126` で終了 (`exit`) する。
 
+## 関数: handle_child_process
+- **引数**:
+  - `cmd`: 実行するコマンド構造体
+  - `data`: シェルの主要データ構造体
+- **処理**:
+  1. `setup_redirections` を呼び出し、リダイレクトを設定する。
+     - 失敗した場合、ステータス `1` で終了 (`exit`) する。
+  2. `SIGINT` と `SIGQUIT` のハンドラをデフォルト (`SIG_DFL`) に戻す。
+  3. `execute_external_cmd` を呼び出し、外部コマンドを実行する。
+
+## 関数: handle_parent_process
+- **引数**:
+  - `pid`: 子プロセスのPID
+  - `data`: シェルの主要データ構造体
+- **処理**:
+  1. `waitpid` で子プロセスの終了を待つ。
+  2. 子プロセスが正常終了した場合 (`WIFEXITED`)、終了ステータスを取得して `data->exit_status` に設定する。
+  3. 子プロセスがシグナルで終了した場合 (`WIFSIGNALED`):
+     - シグナル番号に `128` を加えた値を `data->exit_status` に設定する。
+     - `SIGINT` の場合、改行を出力する。
+     - `SIGQUIT` の場合、"Quit (core dumped)" を出力する。
+
 ## 関数: execute_cmd
 - **引数**:
   - `cmd`: 実行するコマンド構造体
@@ -33,16 +55,8 @@
      - 処理を終了する。
   3. `fork` を呼び出し、子プロセスを作成する。
   4. 子プロセス (`pid == 0`) の場合:
-     - `setup_redirections` を呼び出し、リダイレクトを設定する。
-       - 失敗した場合、ステータス `1` で終了 (`exit`) する。
-     - `SIGINT` と `SIGQUIT` のハンドラをデフォルト (`SIG_DFL`) に戻す。
-     - `execute_external_cmd` を呼び出し、外部コマンドを実行する。
+     - `handle_child_process` を呼び出す。
   5. 親プロセス (`pid > 0`) の場合:
-     - `waitpid` で子プロセスの終了を待つ。
-     - 子プロセスが正常終了した場合 (`WIFEXITED`)、終了ステータスを取得して `data->exit_status` に設定する。
-     - 子プロセスがシグナルで終了した場合 (`WIFSIGNALED`):
-       - シグナル番号に `128` を加えた値を `data->exit_status` に設定する。
-       - `SIGINT` の場合、改行を出力する。
-       - `SIGQUIT` の場合、"Quit (core dumped)" を出力する。
+     - `handle_parent_process` を呼び出す。
   6. `fork` に失敗した場合:
      - エラーメッセージを出力する。

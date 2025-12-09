@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/29 14:09:32 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/09 21:01:20 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,31 +57,34 @@ static void	add_split_tokens(t_token **tokens, char *value)
 	}
 }
 
-static void	process_word_token(char *input, int *i,
+static int	process_word_token(char *input, int *i,
 	t_token **tokens, t_data *data)
 {
 	char	*value;
 	int		quote_type;
 
 	value = build_combined_word(input, i, &quote_type, data);
-	if (value)
+	if (!value)
+		return (0);
+	if (!*value && quote_type != 0)
 	{
-		if (!*value && quote_type != 0)
-		{
-			add_token(tokens, new_token(TOKEN_WORD, ft_strdup("")));
-			free(value);
-		}
-		else if (*value)
-		{
-			add_split_tokens(tokens, value);
-			free(value);
-		}
-		else
-			free(value);
+		add_token(tokens, new_token(TOKEN_WORD, ft_strdup("")));
+		free(value);
 	}
+	else if (*value)
+	{
+		add_split_tokens(tokens, value);
+		free(value);
+	}
+	else
+	{
+		add_token(tokens, new_token(TOKEN_EMPTY_EXPANSION, ft_strdup("")));
+		free(value);
+	}
+	return (1);
 }
 
-static void	process_token(char *input, int *i, t_token **tokens, t_data *data)
+static int	process_token(char *input, int *i, t_token **tokens, t_data *data)
 {
 	if (input[*i] == '|')
 	{
@@ -91,7 +94,11 @@ static void	process_token(char *input, int *i, t_token **tokens, t_data *data)
 	else if (input[*i] == '<' || input[*i] == '>')
 		handle_redirect(input, i, tokens);
 	else
-		process_word_token(input, i, tokens, data);
+	{
+		if (!process_word_token(input, i, tokens, data))
+			return (0);
+	}
+	return (1);
 }
 
 t_token	*lexer(char *input, t_data *data)
@@ -106,7 +113,14 @@ t_token	*lexer(char *input, t_data *data)
 		while (input[i] && ft_isspace(input[i]))
 			i++;
 		if (input[i])
-			process_token(input, &i, &tokens, data);
+		{
+			if (!process_token(input, &i, &tokens, data))
+			{
+				free_tokens(tokens);
+				data->exit_status = 2;
+				return (NULL);
+			}
+		}
 	}
 	return (tokens);
 }

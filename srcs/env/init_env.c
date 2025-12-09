@@ -6,86 +6,98 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/17 13:11:42 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/09 21:58:36 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static t_env	*new_env_node(char *key, char *value)
+static void	update_shlvl(t_env **env)
 {
-	t_env	*node;
+	t_env	*curr;
+	int		lvl;
 
-	node = malloc(sizeof(t_env));
-	if (!node)
-		return (NULL);
-	node->key = ft_strdup(key);
-	node->value = ft_strdup(value);
-	node->next = NULL;
-	if (!node->key || !node->value)
+	curr = *env;
+	while (curr)
 	{
-		free(node->key);
-		free(node->value);
-		free(node);
-		return (NULL);
+		if (ft_strcmp(curr->key, "SHLVL") == 0)
+		{
+			lvl = ft_atoi(curr->value) + 1;
+			free(curr->value);
+			curr->value = ft_itoa(lvl);
+			return ;
+		}
+		curr = curr->next;
 	}
-	return (node);
+	add_env_node(env, new_env_node("SHLVL", "1"));
 }
 
-static void	add_env_node(t_env **env, t_env *new)
+static void	ensure_pwd(t_env **env)
 {
-	t_env	*current;
+	t_env	*curr;
+	char	*cwd;
 
-	if (!new)
-		return ;
-	if (!*env)
+	curr = *env;
+	while (curr)
 	{
-		*env = new;
-		return ;
+		if (ft_strcmp(curr->key, "PWD") == 0)
+			return ;
+		curr = curr->next;
 	}
-	current = *env;
-	while (current->next)
-		current = current->next;
-	current->next = new;
+	cwd = getcwd(NULL, 0);
+	if (cwd)
+	{
+		add_env_node(env, new_env_node("PWD", cwd));
+		free(cwd);
+	}
+}
+
+static void	ensure_underscore(t_env **env)
+{
+	t_env	*curr;
+
+	curr = *env;
+	while (curr)
+	{
+		if (ft_strcmp(curr->key, "_") == 0)
+			return ;
+		curr = curr->next;
+	}
+	add_env_node(env, new_env_node("_", "/usr/bin/env"));
+}
+
+static void	process_env_entry(t_env **env, char *entry)
+{
+	char	*equal;
+	char	*key;
+	char	*value;
+
+	equal = ft_strchr(entry, '=');
+	if (equal)
+	{
+		key = ft_substr(entry, 0, equal - entry);
+		value = ft_strdup(equal + 1);
+		if (key && value)
+			add_env_node(env, new_env_node(key, value));
+		free(key);
+		free(value);
+	}
 }
 
 t_env	*init_env(char **envp)
 {
 	t_env	*env;
-	char	*equal;
-	char	*key;
-	char	*value;
 	int		i;
 
 	env = NULL;
 	i = 0;
 	while (envp[i])
 	{
-		equal = ft_strchr(envp[i], '=');
-		if (equal)
-		{
-			key = ft_substr(envp[i], 0, equal - envp[i]);
-			value = ft_strdup(equal + 1);
-			if (key && value)
-				add_env_node(&env, new_env_node(key, value));
-			free(key);
-			free(value);
-		}
+		process_env_entry(&env, envp[i]);
 		i++;
 	}
+	ensure_pwd(&env);
+	update_shlvl(&env);
+	ensure_underscore(&env);
 	return (env);
-}
-
-void	free_env(t_env *env)
-{
-	t_env	*tmp;
-
-	while (env)
-	{
-		tmp = env;
-		env = env->next;
-		free(tmp->key);
-		free(tmp->value);
-		free(tmp);
-	}
 }
