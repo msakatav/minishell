@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/12/09 20:34:13 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/09 21:58:36 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,15 @@ static int	is_numeric(char *str)
 	int	i;
 
 	i = 0;
-	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n'
-		|| str[i] == '\v' || str[i] == '\f' || str[i] == '\r')
+	while (ft_isspace(str[i]))
 		i++;
 	if (str[i] == '-' || str[i] == '+')
 		i++;
 	if (!str[i])
 		return (0);
-	while (str[i] >= '0' && str[i] <= '9')
+	while (ft_isdigit(str[i]))
 		i++;
-	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n'
-		|| str[i] == '\v' || str[i] == '\f' || str[i] == '\r')
+	while (ft_isspace(str[i]))
 		i++;
 	if (str[i])
 		return (0);
@@ -43,8 +41,7 @@ static int	check_overflow(char *str)
 	num = 0;
 	sign = 1;
 	i = 0;
-	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n'
-		|| str[i] == '\v' || str[i] == '\f' || str[i] == '\r')
+	while (ft_isspace(str[i]))
 		i++;
 	if (str[i] == '-' || str[i] == '+')
 	{
@@ -52,14 +49,13 @@ static int	check_overflow(char *str)
 			sign = -1;
 		i++;
 	}
-	while (str[i] >= '0' && str[i] <= '9')
+	while (ft_isdigit(str[i]))
 	{
 		if (num > 922337203685477580 || (num == 922337203685477580
 				&& ((sign == 1 && str[i] - '0' > 7)
 					|| (sign == -1 && str[i] - '0' > 8))))
 			return (1);
-		num = num * 10 + (str[i] - '0');
-		i++;
+		num = num * 10 + (str[i++] - '0');
 	}
 	return (0);
 }

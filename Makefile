@@ -6,7 +6,7 @@
 #    By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/17 00:00:00 by student           #+#    #+#              #
-#    Updated: 2025/11/30 13:24:09 by msakata          ###   ########TOKYO.jp   #
+#    Updated: 2025/12/09 21:58:36 by msakata          ###   ########TOKYO.jp   #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,7 @@ SRCS = $(SRCS_DIR)/main.c \
        $(SRCS_DIR)/parser/parser.c \
        $(SRCS_DIR)/parser/parser_args.c \
        $(SRCS_DIR)/parser/parser_utils.c \
+       $(SRCS_DIR)/parser/parser_redir.c \
        $(SRCS_DIR)/executor/executor.c \
        $(SRCS_DIR)/executor/execute_cmd.c \
        $(SRCS_DIR)/executor/execute_pipeline.c \
@@ -54,6 +55,7 @@ SRCS = $(SRCS_DIR)/main.c \
        $(SRCS_DIR)/env/init_env.c \
        $(SRCS_DIR)/env/env_utils.c \
        $(SRCS_DIR)/env/env_array.c \
+       $(SRCS_DIR)/env/env_list.c \
        $(SRCS_DIR)/expansion/expand_variables.c \
        $(SRCS_DIR)/expansion/expand_exit_status.c \
        $(SRCS_DIR)/redirections/redirections.c \

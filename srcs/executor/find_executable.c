@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/12/09 19:57:59 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/09 21:58:36 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,25 @@ static char	*search_in_paths(char **paths, char *cmd)
 	return (NULL);
 }
 
+static char	*check_absolute_path(char *cmd)
+{
+	if (access(cmd, F_OK) == 0)
+		return (ft_strdup(cmd));
+	return (NULL);
+}
+
+static char	*check_relative_path(char *cmd)
+{
+	char	*result;
+
+	result = ft_strjoin("./", cmd);
+	if (result && access(result, X_OK) == 0)
+		return (result);
+	if (result)
+		free(result);
+	return (NULL);
+}
+
 char	*find_executable(char *cmd, t_env *env)
 {
 	char	**paths;
@@ -55,21 +74,10 @@ char	*find_executable(char *cmd, t_env *env)
 	if (!cmd || !cmd[0])
 		return (NULL);
 	if (ft_strchr(cmd, '/'))
-	{
-		if (access(cmd, F_OK) == 0)
-			return (ft_strdup(cmd));
-		return (NULL);
-	}
+		return (check_absolute_path(cmd));
 	path_env = get_env_value(env, "PATH");
 	if (!path_env)
-	{
-		result = ft_strjoin("./", cmd);
-		if (result && access(result, X_OK) == 0)
-			return (result);
-		if (result)
-			free(result);
-		return (NULL);
-	}
+		return (check_relative_path(cmd));
 	paths = ft_split(path_env, ':');
 	if (!paths)
 		return (NULL);

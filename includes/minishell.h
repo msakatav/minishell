@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/12/09 20:25:49 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/09 21:58:36 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,7 @@ int			is_separator(char c);
 /* Parser */
 t_cmd		*parser(t_token *tokens, t_data *data);
 char		**parse_args(t_token **tokens, int **quote_types);
+t_redir		*parse_redirections(t_token **tokens, t_data *data, int *error);
 void		free_cmds(t_cmd *cmds);
 t_cmd		*new_cmd(void);
 void		add_cmd(t_cmd **cmds, t_cmd *new);
@@ -127,6 +128,8 @@ int			builtin_exit(char **args, t_data *data);
 
 /* Environment */
 t_env		*init_env(char **envp);
+t_env		*new_env_node(char *key, char *value);
+void		add_env_node(t_env **env, t_env *new);
 char		*get_env_value(t_env *env, char *key);
 void		set_env_value(t_env **env, char *key, char *value);
 void		unset_env_value(t_env **env, char *key);
