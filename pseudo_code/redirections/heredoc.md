@@ -22,16 +22,22 @@
 - **引数**:
   - `fd`: 書き込み先のファイルディスクリプタ
   - `delimiter`: 終了判定用のデリミタ
+  - `data`: シェルの主要データ構造体
+  - `filename`: 一時ファイル名
 - **処理**:
   1. `SIGINT` のハンドラを `signal_handler_heredoc` に設定する。
   2. `read_heredoc_lines` を呼び出し、入力を読み取る。
   3. ファイルディスクリプタを閉じる。
-  4. `exit(0)` で終了する。
+  4. `filename` を解放する。
+  5. `cleanup_data` を呼び出し、メモリを解放する。
+  6. `g_signal_received` が `SIGINT` の場合、`exit(130)` する。
+  7. それ以外の場合、`exit(0)` で終了する。
 
 ## 関数: create_heredoc
 - **引数**:
   - `delimiter`: ヒアドキュメントの終了識別子
   - `filename_out`: 作成されたファイル名を格納するポインタ
+  - `data`: シェルの主要データ構造体
 - **処理**:
   1. `get_heredoc_filename` で一時ファイル名を取得する。
   2. ファイルを書き込みモード (`O_WRONLY | O_CREAT | O_TRUNC`) で開く。

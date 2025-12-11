@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/29 12:15:42 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/11 14:51:27 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,20 +21,23 @@ static void	exec_external_in_child(t_cmd *cmd, t_data *data)
 	if (!path)
 	{
 		print_error(cmd->args[0], "command not found");
+		cleanup_data(data);
 		exit(127);
 	}
 	if (access(path, X_OK) != 0)
 	{
 		print_error(path, "Permission denied");
 		free(path);
+		cleanup_data(data);
 		exit(126);
 	}
 	envp = env_to_array(data->env);
 	execve(path, cmd->args, envp);
+	cleanup_data(data);
 	exit(126);
 }
 
-static void	execute_child(t_cmd *cmd, t_data *data, int *prev, int *pfd)
+static void	setup_child_pipes(t_cmd *cmd, int *prev, int *pfd)
 {
 	if (prev[0] != -1)
 	{
@@ -48,12 +51,26 @@ static void	execute_child(t_cmd *cmd, t_data *data, int *prev, int *pfd)
 		dup2(pfd[1], STDOUT_FILENO);
 		close(pfd[1]);
 	}
+}
+
+static void	execute_child(t_cmd *cmd, t_data *data, int *prev, int *pfd)
+{
+	int	ret;
+
+	setup_child_pipes(cmd, prev, pfd);
 	if (setup_redirections(cmd->redirs, data) < 0)
+	{
+		cleanup_data(data);
 		exit(1);
+	}
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	if (is_builtin(cmd->args[0]))
-		exit(execute_builtin(cmd, data));
+	{
+		ret = execute_builtin(cmd, data);
+		cleanup_data(data);
+		exit(ret);
+	}
 	else
 		exec_external_in_child(cmd, data);
 }

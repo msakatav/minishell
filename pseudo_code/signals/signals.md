@@ -21,7 +21,7 @@
   1. `SIGINT` の場合:
      - `g_signal_received` に `signum` を設定する。
      - 改行を出力する。
-     - ステータス `130` で終了 (`exit`) する。
+     - 標準入力 (`STDIN_FILENO`) を閉じる。これにより `readline` が `NULL` を返し、ループが終了する。
 
 ## 関数: setup_signals
 - **引数**: なし

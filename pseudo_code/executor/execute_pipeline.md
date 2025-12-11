@@ -8,14 +8,18 @@
   1. `find_executable` を呼び出し、コマンドの絶対パスを取得する。
   2. パスが見つからない場合:
      - エラーメッセージ "command not found" を出力する。
+     - `cleanup_data` を呼び出し、メモリを解放する。
      - ステータス `127` で終了 (`exit`) する。
   3. 実行権限がない場合 (`access(path, X_OK) != 0`):
      - エラーメッセージ "Permission denied" を出力する。
      - パスのメモリを解放する。
+     - `cleanup_data` を呼び出し、メモリを解放する。
      - ステータス `126` で終了 (`exit`) する。
   4. `env_to_array` を呼び出し、環境変数を配列形式に変換する。
   5. `execve` を呼び出し、コマンドを実行する。
-  6. `execve` が失敗した場合、ステータス `126` で終了 (`exit`) する。
+  6. `execve` が失敗した場合:
+     - `cleanup_data` を呼び出し、メモリを解放する。
+     - ステータス `126` で終了 (`exit`) する。
 
 ## 関数: execute_child
 - **引数**:
@@ -32,10 +36,12 @@
      - `dup2` で `pfd[1]` を標準出力 (`STDOUT_FILENO`) に複製する。
      - `pfd[1]` (書き込み側) を閉じる。
   3. `setup_redirections` を呼び出し、リダイレクトを設定する。
-     - 失敗した場合、ステータス `1` で終了 (`exit`) する。
+     - 失敗した場合、`cleanup_data` を呼び出し、ステータス `1` で終了 (`exit`) する。
   4. `SIGINT` と `SIGQUIT` のハンドラをデフォルト (`SIG_DFL`) に戻す。
   5. コマンドがビルトインの場合:
-     - `execute_builtin` を呼び出し、その戻り値で終了 (`exit`) する。
+     - `execute_builtin` を呼び出し、その戻り値を保存する。
+     - `cleanup_data` を呼び出し、メモリを解放する。
+     - 保存した戻り値で終了 (`exit`) する。
   6. 外部コマンドの場合:
      - `exec_external_in_child` を呼び出し、外部コマンドを実行する。
 
