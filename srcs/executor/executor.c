@@ -6,24 +6,24 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/29 12:52:43 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/11 14:34:27 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	process_heredoc_redir(t_redir *redir)
+static int	process_heredoc_redir(t_redir *redir, t_data *data)
 {
 	char	*filename;
 
-	if (create_heredoc(redir->file, &filename) < 0)
+	if (create_heredoc(redir->file, &filename, data) < 0)
 		return (-1);
 	free(redir->file);
 	redir->file = filename;
 	return (0);
 }
 
-static int	check_heredocs(t_cmd *cmds)
+static int	check_heredocs(t_cmd *cmds, t_data *data)
 {
 	t_redir	*redir;
 
@@ -34,7 +34,7 @@ static int	check_heredocs(t_cmd *cmds)
 		{
 			if (redir->type == TOKEN_REDIR_HEREDOC)
 			{
-				if (process_heredoc_redir(redir) < 0)
+				if (process_heredoc_redir(redir, data) < 0)
 					return (-1);
 			}
 			redir = redir->next;
@@ -51,7 +51,7 @@ void	executor(t_cmd *cmds, t_data *data)
 
 	if (!cmds)
 		return ;
-	if (check_heredocs(cmds) < 0)
+	if (check_heredocs(cmds, data) < 0)
 		return ;
 	signal(SIGINT, SIG_IGN);
 	saved_stdin = dup(STDIN_FILENO);

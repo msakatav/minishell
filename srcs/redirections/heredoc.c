@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/29 14:09:32 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/11 14:51:27 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,16 @@ static void	read_heredoc_lines(int fd, char *delimiter)
 	}
 }
 
-static void	read_heredoc_child(int fd, char *delimiter)
+static void	read_heredoc_child(int fd, char *delimiter, t_data *data,
+		char *filename)
 {
 	signal(SIGINT, signal_handler_heredoc);
 	read_heredoc_lines(fd, delimiter);
 	close(fd);
+	free(filename);
+	cleanup_data(data);
+	if (g_signal_received == SIGINT)
+		exit(130);
 	exit(0);
 }
 
@@ -62,7 +67,7 @@ static int	wait_heredoc_child(pid_t pid)
 	return (0);
 }
 
-int	create_heredoc(char *delimiter, char **filename_out)
+int	create_heredoc(char *delimiter, char **filename_out, t_data *data)
 {
 	char	*filename;
 	int		fd;
@@ -77,7 +82,7 @@ int	create_heredoc(char *delimiter, char **filename_out)
 	}
 	pid = fork();
 	if (pid == 0)
-		read_heredoc_child(fd, delimiter);
+		read_heredoc_child(fd, delimiter, data, filename);
 	close(fd);
 	if (wait_heredoc_child(pid))
 	{

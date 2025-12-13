@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/11/17 13:11:42 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/11 14:39:23 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	signal_handler_heredoc(int signum)
 	{
 		g_signal_received = signum;
 		write(1, "\n", 1);
-		exit(130);
+		close(STDIN_FILENO);
 	}
 }
 
