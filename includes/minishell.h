@@ -6,7 +6,7 @@
 /*   By: msakata <msakata@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 00:00:00 by student           #+#    #+#             */
-/*   Updated: 2025/12/09 21:58:36 by msakata          ###   ########TOKYO.jp  */
+/*   Updated: 2025/12/11 14:34:27 by msakata          ###   ########TOKYO.jp  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ char		*expand_exit_status(char *str, int exit_status);
 
 /* Redirections */
 int			setup_redirections(t_redir *redirs, t_data *data);
-int			create_heredoc(char *delimiter, char **filename_out);
+int			create_heredoc(char *delimiter, char **filename_out, t_data *data);
 
 /* Signals */
 void		setup_signals(void);

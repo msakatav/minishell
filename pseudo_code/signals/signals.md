@@ -4,6 +4,8 @@
 - `g_signal_received`: 受信したシグナル番号を保持する。初期値は `0`。
 
 ## 関数: signal_handler
+- **概要**:
+  - 通常時のシグナルハンドラ。SIGINTでプロンプトを再表示する。
 - **引数**:
   - `signum`: 受信したシグナル番号
 - **処理**:
@@ -15,15 +17,19 @@
      - `rl_redisplay` でプロンプトを再表示する。
 
 ## 関数: signal_handler_heredoc
+- **概要**:
+  - ヒアドキュメント実行中のシグナルハンドラ。SIGINTで入力を中断する。
 - **引数**:
   - `signum`: 受信したシグナル番号
 - **処理**:
   1. `SIGINT` の場合:
      - `g_signal_received` に `signum` を設定する。
      - 改行を出力する。
-     - ステータス `130` で終了 (`exit`) する。
+     - 標準入力 (`STDIN_FILENO`) を閉じる。これにより `readline` が `NULL` を返し、ループが終了する。
 
 ## 関数: setup_signals
+- **概要**:
+  - シェルの初期シグナル設定を行う（SIGINTハンドラ設定、SIGQUIT無視）。
 - **引数**: なし
 - **処理**:
   1. `sigaction` 構造体 `sa` を初期化する。
